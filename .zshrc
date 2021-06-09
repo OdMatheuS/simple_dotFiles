@@ -112,3 +112,6 @@ fi
 
 alias icat="kitty +kitten icat"
 alias d="kitty +kitten diff"
+
+#Comando Abaixo mostra no fzf os dotFiles, caso quiser ocultar eles, so comentar a linha abaixo
+export FZF_DEFAULT_COMMAND="find -L"
