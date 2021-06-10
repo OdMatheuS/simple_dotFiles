@@ -60,6 +60,9 @@ call plug#end()
 
 colorscheme minimalist
 set background=dark
+set shiftwidth=4
+set autoindent
+set wrap
 let g:javascript_plugin_jsdoc = 1
 let g:vim_jsx_pretty_highlight_close_tag = 1
 let g:vim_jsx_pretty_colorful_config = 1  

@@ -115,3 +115,8 @@ alias d="kitty +kitten diff"
 
 #Comando Abaixo mostra no fzf os dotFiles, caso quiser ocultar eles, so comentar a linha abaixo
 export FZF_DEFAULT_COMMAND="find -L"
+
+export EDITOR=nvim
+export TERM=xterm-256color
+alias vim='nvim'
+alias ..='cd ..'
