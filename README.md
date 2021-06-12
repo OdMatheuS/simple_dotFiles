@@ -1,7 +1,6 @@
 
-## Starting with the credits/expiration to create this init.vim: 
-
-By  [Diki Ananta](https://github.com/dikiaap/dotfiles) and [Ben Awad](https://github.com/benawad).
+## Starting with the credits/expiration to create this init.vim: [Diki Ananta](https://github.com/dikiaap/dotfiles) and [Ben Awad](https://github.com/benawad).
+ 
 
 > Tip: Ben Awad, he has a very good and very explanatory video,
 that helped me to understand better about nvim and plugins, I recommend watching it for those who are curious about the subject. 
