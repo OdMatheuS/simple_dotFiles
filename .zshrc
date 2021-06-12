@@ -122,3 +122,6 @@ alias ..='cd ..'
 
 #mostra apenas Diretorios
 alias lsD="ls -d */"
+
+#mesmo resultado do cat porem com highlight e numeracao e alguns recursos do less
+alias cat="bat"
