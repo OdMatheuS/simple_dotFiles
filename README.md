@@ -1,5 +1,5 @@
 
-## Starting with the credits/expiration to create this init.vim: [Diki Ananta](https://github.com/dikiaap/dotfiles) and [Ben Awad](https://github.com/benawad).
+## Starting with the credits/expiration to create this init.vim: [Diki Ananta](https://github.com/dikiaap/dotfiles), [Ben Awad](https://github.com/benawad) and [ThePrimeagen](https://github.com/ThePrimeagen).
  
 
 > Tip: Ben Awad, he has a very good and very explanatory video,
