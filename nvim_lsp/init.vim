@@ -4,14 +4,21 @@ Plug 'anott03/nvim-lspinstall'
 Plug 'nvim-lua/completion-nvim'
 Plug 'hrsh7th/nvim-compe'
 Plug 'ray-x/lsp_signature.nvim'
+
 "Git and FZF
 Plug 'scrooloose/nerdtree'
-Plug 'tpope/vim-fugitive' "fugitive.vim: A Git wrapper so awesome, it should be illegal 
+Plug 'tpope/vim-fugitive' "fugitive.vim: A Git wrapper so awesome, it should be illegal
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
 Plug 'airblade/vim-gitgutter'
 Plug 'ctrlpvim/ctrlp.vim' " fuzzy find files
+
+" telescope requirements
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 " prettier
 Plug 'sbdchd/neoformat'
@@ -24,37 +31,39 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "Themes
 Plug 'morhetz/gruvbox'
-Plug 'vim-airline/vim-airline-themes' "A collection of themes for vim-airline 
+Plug 'vim-airline/vim-airline-themes' "A collection of themes for vim-airline
 Plug 'vim-airline/vim-airline'
 call plug#end()
+
 lua << EOF
-require'lspconfig'.tsserver.setup{ on_attach=require'completion'.on_attach }
-require'nvim-treesitter.configs'.setup {
-  indent = {
-  enable = true
+  require'lspconfig'.tsserver.setup{ on_attach=require'completion'.on_attach }
+  require'nvim-treesitter.configs'.setup {
+    indent = {
+    enable = true
+    }
   }
-}
-require'nvim-treesitter.configs'.setup {
-  highlight = {
-  enable = true,
-  custom_captures = {
-    -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
-    ["foo.bar"] = "Identifier",
+  require'nvim-treesitter.configs'.setup {
+    highlight = {
+    enable = true,
+    custom_captures = {
+      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
+      ["foo.bar"] = "Identifier",
+      },
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
     },
-  -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-  -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-  -- Using this option may slow down your editor, and you may see some duplicate highlights.
-  -- Instead of true it can also be a list of languages
-  additional_vim_regex_highlighting = false,
-  },
-}
+  }
 EOF
 
-let g:gruvbox_contrast_dark = 'soft'
-if exists('+termguicolors')
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-endif
+let g:gruvbox_contrast_dark = 'hard'
+  if exists('+termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  endif
+
 let g:gruvbox_invert_selection='0'
 colorscheme gruvbox
 set background=dark
@@ -62,6 +71,24 @@ set background=dark
 set completeopt=menuone,noinsert,noselect
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
+".:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.
+"telescope key Thanks ThePrimeagen
+let mapleader = " "
+nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Search:")})<CR>
+
+".:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.
+"Remove WhiteSpaces Thanks ThePrimeagen
+fun! TrimWhiteSpaces()
+  let l:save = winsaveview()
+  keeppatterns %s/\s\+$//e
+  call winrestview(l:save)
+endfun
+
+augroup THE_PRIMEAGEN
+  autocmd!
+  autocmd BufWritePre * :call TrimWhiteSpaces()
+augroup END
+".:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.
 "Prettier configs indentation
 let g:standard_prettier_settings = {
       \ 'exe': 'prettier',
@@ -69,17 +96,12 @@ let g:standard_prettier_settings = {
       \ 'stdin': 1,
       \ }
 
-autocmd FileType javascript,typescript,typescriptreact,json setl foldmethod=syntax
-
-autocmd FileType javascript,html,css,scss,typescript setlocal foldlevel=99
-
 let g:nvim_typescript#javascript_support=1
 let g:neoformat_javascript_prettier = g:standard_prettier_settings
-let g:neoformat_enabled_javascript = ['prettier']
-let g:neoformat_try_formatprg = 1
-let g:neoformat_javascript_prettier = g:standard_prettier_settings
-let g:neoformat_enabled_typescript = ['prettier']
 let g:neoformat_typescriptreact_prettier = g:standard_prettier_settings
+let g:neoformat_try_formatprg = 1
+let g:neoformat_enabled_javascript = ['prettier']
+let g:neoformat_enabled_typescript = ['prettier']
 
 augroup NeoformatAutoFormat
   autocmd!
@@ -92,30 +114,21 @@ augroup NeoformatAutoFormat
 augroup END
 
 " my Settings VIM start
-"**********************************************
+".:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.
 set smarttab
 set cindent
 set wrap
-
 set termguicolors " enable true colors support
-
 set tabstop=2 "Tamanho da indentacao"
 
 "identifica o tipo de arquivo e auto indenta o mesmo"
-filetype plugin indent on 
-
+filetype plugin indent on
 syntax on
-
 set shiftwidth=2 "Deixar coerente a identacao com o tamnaho de Tab"
-
 set backspace=2 "comportamento usual do backspace"
-
 set number "esse comando serve para numerar as linhas"
-
 set relativenumber "faz o calculo da distancia das linhas"
-
 set hlsearch "destaque nos resultados"
-
 set incsearch "busca incremental - traz feedback enquanto busco"
 
 "Atalho do Emmet
@@ -127,8 +140,19 @@ set expandtab
 "backspace respeitar identacao
 set softtabstop=2
 
+"vertical bar limit
+set colorcolumn=110
+
+set hidden
+
+" Ignore show files
+set wildignore+=*_build/*
+set wildignore+=**/node_modules/*
+set wildignore+=**/.git/*
+
 set statusline+=%{exists('g:loaded_fugitive')?fugitive#statusline():''}
-"**********************************************
+".:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:.
+
 let g:compe = {}
 let g:compe.enabled = v:true
 let g:compe.autocomplete = v:true
