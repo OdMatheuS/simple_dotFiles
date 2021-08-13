@@ -13,6 +13,12 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'airblade/vim-gitgutter'
 Plug 'ctrlpvim/ctrlp.vim' " fuzzy find files
 
+" prettier
+Plug 'sbdchd/neoformat'
+
+" post install (yarn install | npm install) then load plugin only for editing supported files
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+
 "syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
@@ -23,27 +29,31 @@ Plug 'vim-airline/vim-airline'
 call plug#end()
 lua << EOF
 require'lspconfig'.tsserver.setup{ on_attach=require'completion'.on_attach }
-require'lspconfig'.html.setup{}
+require'nvim-treesitter.configs'.setup {
+  indent = {
+  enable = true
+  }
+}
 require'nvim-treesitter.configs'.setup {
   highlight = {
-    enable = true,
-    custom_captures = {
-      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
-      ["foo.bar"] = "Identifier",
+  enable = true,
+  custom_captures = {
+    -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
+    ["foo.bar"] = "Identifier",
     },
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
+  -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+  -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+  -- Using this option may slow down your editor, and you may see some duplicate highlights.
+  -- Instead of true it can also be a list of languages
+  additional_vim_regex_highlighting = false,
   },
 }
 EOF
 
-let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_contrast_dark = 'soft'
 if exists('+termguicolors')
-	let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-	let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
 let g:gruvbox_invert_selection='0'
 colorscheme gruvbox
@@ -52,13 +62,41 @@ set background=dark
 set completeopt=menuone,noinsert,noselect
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
+"Prettier configs indentation
+let g:standard_prettier_settings = {
+      \ 'exe': 'prettier',
+      \ 'args': ['--stdin', '--stdin-filepath', '%:p', '--single-quote'],
+      \ 'stdin': 1,
+      \ }
+
+autocmd FileType javascript,typescript,typescriptreact,json setl foldmethod=syntax
+
+autocmd FileType javascript,html,css,scss,typescript setlocal foldlevel=99
+
+let g:nvim_typescript#javascript_support=1
+let g:neoformat_javascript_prettier = g:standard_prettier_settings
+let g:neoformat_enabled_javascript = ['prettier']
+let g:neoformat_try_formatprg = 1
+let g:neoformat_javascript_prettier = g:standard_prettier_settings
+let g:neoformat_enabled_typescript = ['prettier']
+let g:neoformat_typescriptreact_prettier = g:standard_prettier_settings
+
+augroup NeoformatAutoFormat
+  autocmd!
+  autocmd FileType javascript,javascript.jsx setlocal formatprg=prettier\
+        \--stdin\
+        \--print-width\ 80\
+        \--single-quote\
+        \--trailing-comma\ es5
+  autocmd BufWritePre *.js,*.jsx Neoformat
+augroup END
 
 " my Settings VIM start
 "**********************************************
 set smarttab
 set cindent
 set wrap
- 
+
 set termguicolors " enable true colors support
 
 set tabstop=2 "Tamanho da indentacao"
