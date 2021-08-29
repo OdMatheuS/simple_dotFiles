@@ -23,6 +23,9 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 " prettier
 Plug 'sbdchd/neoformat'
 
+"Auto pairs
+Plug 'jiangmiao/auto-pairs'
+
 " post install (yarn install | npm install) then load plugin only for editing supported files
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
@@ -67,6 +70,16 @@ let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_invert_selection='0'
 colorscheme gruvbox
 set background=dark
+
+" LSP config (the mappings used in the default file don't quite work right)
+nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <C-n> <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent> <C-p> <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 
 set completeopt=menuone,noinsert,noselect
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
@@ -121,6 +134,8 @@ set wrap
 set termguicolors " enable true colors support
 set tabstop=2 "Tamanho da indentacao"
 
+set guicursor=n-v:blinkon1 "Finaly cursor blink mode, thanks https://github.com/wez/wezterm/issues/1073"
+
 "identifica o tipo de arquivo e auto indenta o mesmo"
 filetype plugin indent on
 syntax on
@@ -143,7 +158,11 @@ set softtabstop=2
 "vertical bar limit
 set colorcolumn=110
 
+"Necessário p/ manter vários buffers abertos
 set hidden
+
+"open vertical split right
+set splitright
 
 " Ignore show files
 set wildignore+=*_build/*
