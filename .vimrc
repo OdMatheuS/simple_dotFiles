@@ -3,8 +3,7 @@ execute pathogen#infect()
 
 set termguicolors " enable true colors support
 
-let ayucolor="mirage" " for mirage version of theme
-"let ayucolor="dark"   " for dark version of theme
+let ayucolor="dark"   " for dark version of theme
 colorscheme ayu " Theme do vim
 
 set tabstop=2 "Tamanho da indentacao"
@@ -25,4 +24,3 @@ set relativenumber "faz o calculo da distancia das linhas"
 set hlsearch "destaque nos resultados"
 
 set incsearch "busca incremental - traz feedback enquanto busco"
-
