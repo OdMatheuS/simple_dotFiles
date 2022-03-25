@@ -17,8 +17,26 @@ require('packer').startup(function(use)
     requires = { {'nvim-lua/plenary.nvim'} }
   }
 
+  --TreeSitter
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
+  }
+
   --Format
   use 'sbdchd/neoformat'
+
+  --Visual Ident Guide Line
+  use 'nathanaelkane/vim-indent-guides'
+
+  --File Tree
+  use {
+      'kyazdani42/nvim-tree.lua',
+      requires = {
+        'kyazdani42/nvim-web-devicons', -- optional, for file icon
+      },
+      config = function() require'nvim-tree'.setup {} end
+  }
 
   -- LSP
   use {
@@ -75,18 +93,21 @@ pcall(vim.cmd, 'colorscheme gruvbox')
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
-vim.api.nvim_set_keymap('n', 'ge', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+  vim.api.nvim_set_keymap('n', 'ge', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
---Template pra chamar fn como se tivesse chamando igual no command default do Vim
---vim.api.nvim_set_keymap('n', ';f', ':%s/foo/bar/gc <CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', ';f', ':Telescope find_files <CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', ';p', ':Telescope live_grep<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', ';k', ':Telescope file_browser<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', ';j', ':Telescope current_buffer_fuzzy_find<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'za', ':so%<CR>', { noremap = true, silent = true })
+  --Template pra chamar fn como se tivesse chamando igual no command default do Vim
+  --vim.api.nvim_set_keymap('n', ';f', ':%s/foo/bar/gc <CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', ';f', ':Telescope find_files <CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', ';p', ':Telescope live_grep<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', ';k', ':Telescope file_browser<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', ';j', ':Telescope current_buffer_fuzzy_find<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', 'za', ':so%<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', '<C-o>', ':NvimTreeToggle<CR>',{ noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', '<C-l>', ':IndentGuidesToggle<CR>',{ noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.formatting()<CR>', { noremap = true, silent = true })
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -108,14 +129,25 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gt', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  --vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gt', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+  local tree_cb = require'nvim-tree.config'.nvim_tree_callback
+
+
+  local list = {
+    { key = {"<CR>", "o" }, action = "edit", mode = "n"},
+    { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
+    { key = "<2-RightMouse>", action = "" }, -- will remove default cd action
+  }
 
   if client.resolved_capabilities.document_formatting then
     vim.api.nvim_command [[augroup Format]]
     vim.api.nvim_command [[autocmd! * <buffer>]]
-    vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]]
+    vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting()]]
     vim.api.nvim_command [[augroup END]]
   end
+
+
 end
 
 
@@ -152,13 +184,155 @@ require('lualine').setup {
 
 require('telescope').setup{
   defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
     mappings = {
       i = {
+        -- map actions.which_key to <C-h> (default: <C-/>)
+        -- actions.which_key shows the mappings for your picker,
+        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
         ["<C-h>"] = "which_key"
       }
     }
   },
-  pickers = {},
-  extensions = {}
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    -- Your extension configuration goes here:
+    -- extension_name = {
+    --   extension_config_key = value,
+    -- }
+    -- please take a look at the readme of the extension you want to configure
+  }
 }
 
+require'nvim-treesitter.configs'.setup {
+  -- One of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = "maintained",
+
+  -- Install languages synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- List of parsers to ignore installing
+  ignore_install = { "javascript" },
+
+  highlight = {
+    -- `false` will disable the whole extension
+    enable = true,
+
+    -- list of language that will be disabled
+    disable = { "c", "rust" },
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+
+
+
+-- setup with all defaults
+-- each of these are documented in `:help nvim-tree.OPTION_NAME`
+require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
+  auto_close = false,
+  auto_reload_on_write = true,
+  disable_netrw = false,
+  hide_root_folder = false,
+  hijack_cursor = false,
+  hijack_netrw = true,
+  hijack_unnamed_buffer_when_opening = false,
+  ignore_buffer_on_setup = false,
+  open_on_setup = false,
+  open_on_tab = false,
+  sort_by = "name",
+  update_cwd = false,
+  view = {
+    width = 30,
+    height = 30,
+    side = "left",
+    preserve_window_proportions = false,
+    number = false,
+    relativenumber = false,
+    signcolumn = "yes",
+    mappings = {
+      custom_only = false,
+      list = {
+        -- user mappings go here
+      },
+    },
+  },
+  hijack_directories = {
+    enable = true,
+    auto_open = true,
+  },
+  update_focused_file = {
+    enable = false,
+    update_cwd = false,
+    ignore_list = {},
+  },
+  ignore_ft_on_setup = {},
+  system_open = {
+    cmd = nil,
+    args = {},
+  },
+  diagnostics = {
+    enable = false,
+    show_on_dirs = false,
+    icons = {
+      hint = "",
+      info = "",
+      warning = "",
+      error = "",
+    },
+  },
+  filters = {
+    dotfiles = false,
+    custom = {},
+    exclude = {},
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 400,
+  },
+  actions = {
+    change_dir = {
+      enable = true,
+      global = false,
+    },
+    open_file = {
+      quit_on_open = false,
+      resize_window = false,
+      window_picker = {
+        enable = true,
+        chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+        exclude = {
+          filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
+          buftype = { "nofile", "terminal", "help" },
+        },
+      },
+    },
+  },
+  trash = {
+    cmd = "trash",
+    require_confirm = true,
+  },
+  log = {
+    enable = false,
+    truncate = false,
+    types = {
+      all = false,
+      config = false,
+      git = false,
+    },
+  },
+} -- END_DEFAULT_OPT
