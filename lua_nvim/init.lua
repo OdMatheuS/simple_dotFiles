@@ -66,12 +66,17 @@ local lsp = require('lsp-zero')
 lsp.preset('recommended')
 lsp.nvim_workspace()
 lsp.setup()
--- Tab set to two spaces
-vim.opt.tabstop = 2
+
+vim.opt.tabstop = 2 -- Tab set to two spaces
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 vim.opt.expandtab = true
 vim.opt.signcolumn = 'yes'
+vim.opt.cursorline = true -- highlight the current line
+vim.opt.clipboard = "unnamedplus"
+vim.opt.colorcolumn = "99"
+--vim.opt.pumheight = 100000
+vim.opt.guicursor = "n-v:blinkon1"
 
 --esse comando serve para numerar as linhas--
 vim.opt.number = true
@@ -108,6 +113,21 @@ local opts = { noremap=true, silent=true }
   vim.api.nvim_set_keymap('n', '<C-o>', ':NvimTreeToggle<CR>',{ noremap = true, silent = true })
   vim.api.nvim_set_keymap('n', '<C-l>', ':IndentGuidesToggle<CR>',{ noremap = true, silent = true })
   vim.api.nvim_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.formatting()<CR>', { noremap = true, silent = true })
+
+
+vim.cmd([[
+  augroup trim
+    autocmd!
+    autocmd BufWritePre * silent! :%s/\s\+$//e
+  augroup END
+]])
+
+--top
+vim.cmd([[
+  augroup testgroup
+    autocmd BufEnter * :highlight Normal guibg=none
+  augroup END
+]])
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -149,6 +169,7 @@ local on_attach = function(client, bufnr)
 
 
 end
+
 
 
 require('lualine').setup {
