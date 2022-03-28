@@ -106,6 +106,7 @@ local opts = { noremap=true, silent=true }
   --vim.api.nvim_set_keymap('n', ';f', ':%s/foo/bar/gc <CR>', { noremap = true, silent = true })
   vim.api.nvim_set_keymap('n', ';f', ':Telescope find_files <CR>', { noremap = true, silent = true })
   vim.api.nvim_set_keymap('n', ';p', ':Telescope live_grep<CR>', { noremap = true, silent = true })
+  vim.api.nvim_set_keymap('n', ';k', ':Telescope find_files<CR>', { noremap = true, silent = true })
   vim.api.nvim_set_keymap('n', ';j', ':Telescope current_buffer_fuzzy_find<CR>', { noremap = true, silent = true })
   vim.api.nvim_set_keymap('n', 'za', ':so%<CR>', { noremap = true, silent = true })
   vim.api.nvim_set_keymap('n', '<C-o>', ':NvimTreeToggle<CR>',{ noremap = true, silent = true })
