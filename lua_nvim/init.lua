@@ -76,6 +76,7 @@ vim.opt.cursorline = true -- highlight the current line
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "99"
 vim.opt.guicursor = "n-v:blinkon1"
+vim.opt.splitright = true --force all vertical splits
 
 --esse comando serve para numerar as linhas--
 vim.opt.number = true
