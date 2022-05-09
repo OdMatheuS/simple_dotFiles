@@ -3,7 +3,9 @@ require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   -- Colorscheme
-  use 'ellisonleao/gruvbox.nvim'
+  --use 'ellisonleao/gruvbox.nvim'
+  --use 'shaunsingh/solarized.nvim'
+  use 'EdenEast/nightfox.nvim'
 
   --Line
   use {
@@ -25,6 +27,15 @@ require('packer').startup(function(use)
 
   --Format
   use 'sbdchd/neoformat'
+
+  --Linter
+  use({
+      "jose-elias-alvarez/null-ls.nvim",
+      config = function()
+          require("null-ls").setup()
+      end,
+      requires = { "nvim-lua/plenary.nvim" },
+  })
 
   --Visual Ident Guide Line
   use 'nathanaelkane/vim-indent-guides'
@@ -75,8 +86,10 @@ vim.opt.signcolumn = 'yes'
 vim.opt.cursorline = true -- highlight the current line
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "99"
+vim.opt.pumheight = 100000
 vim.opt.guicursor = "n-v:blinkon1"
-vim.opt.splitright = true --force all vertical splits
+
+--vim.opt.transparent_window = true
 
 --esse comando serve para numerar as linhas--
 vim.opt.number = true
@@ -91,9 +104,18 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
-vim.o.background = "dark" -- or "light" for light mode
-pcall(vim.cmd, 'colorscheme gruvbox')
+--vim.o.background = "light" -- or "light" for light mode
+--pcall(vim.cmd, 'colorscheme gruvbox')
 
+--require('solarized').set()
+pcall(vim.cmd, 'colorscheme nightfox')
+require('lualine').setup {
+  options = {
+    -- ... your lualine config
+    theme = 'solarized'
+    -- ... your lualine config
+  }
+}
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -105,29 +127,42 @@ local opts = { noremap=true, silent=true }
 
   --Template pra chamar fn como se tivesse chamando igual no command default do Vim
   --vim.api.nvim_set_keymap('n', ';f', ':%s/foo/bar/gc <CR>', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', ';f', ':Telescope find_files <CR>', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', ';p', ':Telescope live_grep<CR>', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', ';k', ':Telescope find_files<CR>', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', ';j', ':Telescope current_buffer_fuzzy_find<CR>', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', 'za', ':so%<CR>', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', '<C-o>', ':NvimTreeToggle<CR>',{ noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', '<C-l>', ':IndentGuidesToggle<CR>',{ noremap = true, silent = true })
-  vim.api.nvim_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.formatting()<CR>', { noremap = true, silent = true })
-
+  vim.api.nvim_set_keymap('n', ';f', ':Telescope find_files <CR>', opts)
+  vim.api.nvim_set_keymap('n', ';p', ':Telescope live_grep<CR>', opts)
+  vim.api.nvim_set_keymap('n', ';k', ':Telescope file_browser<CR>', opts)
+  vim.api.nvim_set_keymap('n', ';j', ':Telescope current_buffer_fuzzy_find<CR>', opts)
+  vim.api.nvim_set_keymap('n', 'za', ':so%<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<C-o>', ':NvimTreeToggle<CR>',opts)
+  vim.api.nvim_set_keymap('n', '<C-l>', ':IndentGuidesToggle<CR>',opts)
+  vim.api.nvim_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  vim.api.nvim_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<space>gk', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+--Template
+--vim.cmd([[
+ -- augroup highlight_yank
+  --  autocmd!
+   -- autocmd TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}
+  --augroup END
+--]])
 
 vim.cmd([[
-  augroup trim
+  augroup trima
     autocmd!
-    autocmd BufWritePre * silent! :%s/\s\+$//e
+    autocmd BufWritePre * silent! :%s/\n\{3,}/\r\r/e
   augroup END
 ]])
 
---top
-vim.cmd([[
-  augroup testgroup
-    autocmd BufEnter * :highlight Normal guibg=none
-  augroup END
-]])
+--top transparent window
+--vim.cmd([[
+--  augroup testgroup
+ --   autocmd BufEnter * :highlight Normal guibg=none
+ -- augroup END
+ --]])
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -153,7 +188,6 @@ local on_attach = function(client, bufnr)
 
   local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 
-
   local list = {
     { key = {"<CR>", "o" }, action = "edit", mode = "n"},
     { key = "s", cb = tree_cb("vsplit") }, --tree_cb and the cb property are deprecated
@@ -167,10 +201,7 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_command [[augroup END]]
   end
 
-
 end
-
-
 
 require('lualine').setup {
   options = {
@@ -236,10 +267,10 @@ require('telescope').setup{
 
 require'nvim-treesitter.configs'.setup {
   -- One of "all", "maintained" (parsers with maintainers), or a list of languages
-  ensure_installed = "maintained",
+  ensure_installed = "all",
 
   -- Install languages synchronously (only applied to `ensure_installed`)
-  sync_install = false,
+  --sync_install = false,
 
   -- List of parsers to ignore installing
   ignore_install = { "javascript" },
@@ -259,15 +290,13 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
-
-
 -- setup with all defaults
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
-  auto_close = false,
+  --auto_close = false,
   auto_reload_on_write = true,
   disable_netrw = false,
-  hide_root_folder = false,
+  --hide_root_folder = false,
   hijack_cursor = false,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
@@ -357,3 +386,119 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
     },
   },
 } -- END_DEFAULT_OPT
+  require("null-ls").setup({
+      sources = {
+          --require("null-ls").builtins.formatting.mix,
+          --require("null-ls").builtins.diagnostics.credo,
+          require("null-ls").builtins.completion.spell,
+          require("null-ls").builtins.diagnostics.credo
+      },
+  })
+
+local h = require("null-ls.helpers")
+local methods = require("null-ls.methods")
+
+local DIAGNOSTICS = methods.internal.DIAGNOSTICS
+
+local function generic_issue(message)
+    return {
+        message = message,
+        row = 1,
+        source = "credo",
+    }
+end
+
+return h.make_builtin({
+    name = "credo",
+    meta = {
+        url = "https://hexdocs.pm/credo",
+        description = "Static analysis of `elixir` files for enforcing code consistency.",
+        notes = {
+            "Searches upwards from the buffer to the project root and tries to find the first `.credo.exs` file in case the project has nested `credo` configs.",
+        },
+    },
+    method = DIAGNOSTICS,
+    filetypes = { "elixir" },
+    generator_opts = {
+        command = "mix",
+        --NOTE: search upwards to look for the credo config file
+        cwd = function(params)
+            local match = vim.fn.findfile(".credo.exs", vim.fn.fnamemodify(params.bufname, ":h") .. ";" .. params.root)
+
+            if match then
+                return vim.fn.fnamemodify(match, ":h")
+            else
+                return params.root
+            end
+        end,
+        args = { "credo", "suggest", "--format", "json", "--read-from-stdin", "$FILENAME" },
+        format = "raw",
+        to_stdin = true,
+        from_stderr = true,
+        on_output = function(params, done)
+            local issues = {}
+
+            -- report any unexpected errors, such as partial file attempts
+            if params.err then
+                table.insert(issues, generic_issue(params.err))
+            end
+
+            -- if no output to parse, stop
+            if not params.output then
+                return done(issues)
+            end
+
+            local json_index, _ = params.output:find("{")
+
+            -- if no json included, something went wrong and nothing to parse
+            if not json_index then
+                table.insert(issues, generic_issue(params.output))
+
+                return done(issues)
+            end
+
+            local maybe_json_string = params.output:sub(json_index)
+
+            local ok, decoded = pcall(vim.json.decode, maybe_json_string)
+
+            -- decoding broke, so give up and return the original output
+            if not ok then
+                table.insert(issues, generic_issue(params.output))
+
+                return done(issues)
+            end
+
+            for _, issue in ipairs(decoded.issues or {}) do
+                local err = {
+                    message = issue.message,
+                    row = issue.line_no,
+                    source = "credo",
+                }
+
+                -- using the dynamic priority ranges from credo source
+                if issue.priority >= 10 then
+                    err.severity = h.diagnostics.severities.error
+                elseif issue.priority >= 0 then
+                    err.severity = h.diagnostics.severities.warning
+                elseif issue.priority >= -10 then
+                    err.severity = h.diagnostics.severities.information
+                else
+                    err.severity = h.diagnostics.severities.hint
+                end
+
+                if issue.column and issue.column ~= vim.NIL then
+                    err.col = issue.column
+                end
+
+                if issue.column_end and issue.column_end ~= vim.NIL then
+                    err.end_col = issue.column_end
+                end
+
+                table.insert(issues, err)
+            end
+
+            done(issues)
+        end,
+    },
+    factory = h.generator_factory,
+})
