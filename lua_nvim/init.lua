@@ -40,6 +40,9 @@ require('packer').startup(function(use)
   --Visual Ident Guide Line
   use 'nathanaelkane/vim-indent-guides'
 
+  --Cursor Highlight Line
+  use 'yamatsum/nvim-cursorline'
+
   --File Tree
   use {
       'kyazdani42/nvim-tree.lua',
@@ -87,7 +90,10 @@ vim.opt.cursorline = true -- highlight the current line
 vim.opt.clipboard = "unnamedplus"
 vim.opt.colorcolumn = "99"
 vim.opt.pumheight = 100000
+vim.opt.fileencoding = "utf-8"
+vim.opt.updatetime = 300
 vim.opt.guicursor = "n-v:blinkon1"
+vim.opt.scrolloff = 10
 
 --vim.opt.transparent_window = true
 
@@ -157,6 +163,27 @@ vim.cmd([[
   augroup END
 ]])
 
+--local B = {}
+local M = {}
+
+--
+--
+--
+--> :lua changeheader()
+-- This function is called with the BufWritePre event (autocmd)
+-- and when I want to save a file I use ":update" which
+-- only writes a buffer if it was modified
+ M.changeheader = function()
+    -- We only can run this function if the file is modifiable
+    if not vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "modifiable") then
+        return
+    end
+    if vim.fn.line("$") >= 7 then
+        os.setlocale("en_US.UTF-8") -- show Sun instead of dom (portuguese)
+        time = os.date("%a, %d %b %Y %H:%M")
+        M.preserve("sil! keepp keepj 1,7s/\\vlast (modified|change):\\zs.*/ " .. time .. "/ei")
+    end
+end
 --top transparent window
 --vim.cmd([[
 --  augroup testgroup
@@ -202,6 +229,19 @@ local on_attach = function(client, bufnr)
   end
 
 end
+
+require('nvim-cursorline').setup {
+  cursorline = {
+    enable = true,
+    timeout = 2000,
+    number = false,
+  },
+  cursorword = {
+    enable = true,
+    min_length = 3,
+    hl = { underline = true },
+  }
+}
 
 require('lualine').setup {
   options = {
