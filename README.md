@@ -1,4 +1,4 @@
-## Work in Progress
+## Work in Progress...
 
 ## Starting with the credits/expiration to create this init.vim: [Diki Ananta](https://github.com/dikiaap/dotfiles), [Ben Awad](https://github.com/benawad) and [ThePrimeagen](https://github.com/ThePrimeagen).
  
