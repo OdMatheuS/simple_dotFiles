@@ -1,0 +1,1 @@
+ncdu neofetch htop ripgrep exa emacs git wget curl fzf zsh hdparm thunar fd-find bat tmux gparted
