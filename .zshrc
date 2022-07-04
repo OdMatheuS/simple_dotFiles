@@ -115,8 +115,14 @@ alias lsD="ls -d */"
 #mesmo resultado do cat porem com highlight e numeracao e alguns recursos do less
 alias cat="bat -p"
 
-#usar emacs sem abrir GUI, rodar direto no terminal que exec o "emacs"
+#usar emacs sem abrir GUI
 alias emacs="emacs -nw"
+alias doomsync="~/.emacs.d/bin/doom sync"
+alias doomdoctor="~/.emacs.d/bin/doom doctor"
+alias doomupgrade="~/.emacs.d/bin/doom upgrade"
+alias doompurge="~/.emacs.d/bin/doom purge"
+
+#alias emacs="emacs -fs"
 
 #caso um dia volte a usar o kitty
 #alias icat="kitty +kitten icat"
@@ -125,7 +131,7 @@ alias emacs="emacs -nw"
 #Comando Abaixo mostra no fzf os dotFiles, caso quiser ocultar eles, so comentar a linha abaixo
 export FZF_DEFAULT_COMMAND="find -L"
 
-export EDITOR=nvim
+export EDITOR=emacs
 export TERM=xterm-256color
 
 . $HOME/.asdf/asdf.sh
