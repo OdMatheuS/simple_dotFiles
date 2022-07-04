@@ -124,6 +124,9 @@ alias doompurge="~/.emacs.d/bin/doom purge"
 
 #alias emacs="emacs -fs"
 
+# Colorize grep output (good for log files)
+alias grep='grep --color=auto'
+
 #caso um dia volte a usar o kitty
 #alias icat="kitty +kitten icat"
 #alias d="kitty +kitten diff"
