@@ -1,1 +1,1 @@
-ncdu neofetch htop ripgrep exa emacs git wget curl fzf zsh hdparm thunar fd-find bat tmux gparted i3wm nitrogen xinit xorg rofi pdfgrep i3-exit redshift arandr build-essential moc simplescreenrecorder lximage-qt arc-theme fdupes rdfind racket evince vlc cmake 7z flameshot
+ncdu neofetch htop ripgrep exa emacs git wget curl fzf zsh hdparm thunar fd-find bat tmux gparted i3wm nitrogen xinit xorg rofi pdfgrep i3-exit redshift arandr build-essential moc simplescreenrecorder lximage-qt arc-theme fdupes rdfind racket evince vlc cmake 7z flameshot compton
