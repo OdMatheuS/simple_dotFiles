@@ -116,7 +116,7 @@ alias lsD="ls -d */"
 alias cat="bat -p"
 
 #usar emacs sem abrir GUI
-alias emacs="emacs -nw"
+alias emacs="emacs --file"
 alias doomsync="~/.emacs.d/bin/doom sync"
 alias doomdoctor="~/.emacs.d/bin/doom doctor"
 alias doomupgrade="~/.emacs.d/bin/doom upgrade"
