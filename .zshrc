@@ -115,7 +115,7 @@ alias lsD="ls -d */"
 #mesmo resultado do cat porem com highlight e numeracao e alguns recursos do less
 alias cat="bat -p"
 
-#usar emacs sem abrir GUI
+#usar emacs sem abrir *scratch*
 alias emacs="emacs --file"
 alias doomsync="~/.emacs.d/bin/doom sync"
 alias doomdoctor="~/.emacs.d/bin/doom doctor"
