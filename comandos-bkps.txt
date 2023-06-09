@@ -1,0 +1,14 @@
+
+--bkp de dotfiles + .config
+tar -czvf backup_home.tar.gz --exclude="*Cache*"  --exclude="*Code*" --exclude="*discord*"  --exclude="*chromium*"   --exclude="*Goo*" --exclude="*balena*" --exclude="*obs*"   --exclude="*microsoft*"  --exclude="*libreo*"  --exclude="*xfce*" --exclude="*session*" --exclude="*Box*" --exclude="*akon*" --exclude="*Post*"   --exclude="*Duplicati*"  ~/.config
+
+--bkp home geral sem .config ou dotfiles
+tar -czvf - --exclude=".*" --exclude="*.mkv" --exclude="*.gz" --exclude="*.iso" --exclude="*.xz" --exclude="*.rpm" --exclude="*.jar" --exclude="*.AppImage" --exclude="*node_modules" --exclude="*.class" --exclude="*.dat" --exclude="*.git"   /home | gzip -1 > backup_home.tar.gz
+
+
+--exclusivo busca e faz bkp apenas de .mkv
+sudo find /home -type f -name "*.mkv" -exec tar -czvf backup_mkv.tar.gz {} +
+
+dnf list installed | awk '{print $1}' > pacotes_instalados.txt
+flatpak list | awk '{print $1}' > pacotes_flatpak.txt
+
