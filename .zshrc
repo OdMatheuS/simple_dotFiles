@@ -134,6 +134,11 @@ alias grep='grep --color=auto'
 #Comando Abaixo mostra no fzf os dotFiles, caso quiser ocultar eles, so comentar a linha abaixo
 export FZF_DEFAULT_COMMAND="find -L"
 
+#AndroidStudio
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
 export EDITOR=emacs
 export TERM=xterm-256color
 
